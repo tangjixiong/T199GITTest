@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- settings:Mybatis全局配置标签 -->
+	<settings>
+		<setting name="logImpl" value="LOG4J" />
+		<!-- PARTIAL:自动把属性名和列名相同的数据，进行设置值（在有association或collection标签会失效） -->
+		<!-- FULL:自动把属性名和列名相同的数据，进行设置值（在有association或collection标签也是有效的） -->
+		<setting name="autoMappingBehavior" value="FULL" />
+	</settings>
+	<!-- 自动给某个包下所有类取别名，别名为：类名全小写 -->
+	<typeAliases>
+		<package name="com.t199.entity" />
+	</typeAliases>
+</configuration>
+

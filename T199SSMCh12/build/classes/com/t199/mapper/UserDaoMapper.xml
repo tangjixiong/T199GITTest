@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace:配置接口的全路径 -->
+<mapper namespace="com.t199.dao.UserDao">
+	<select id="getUserByNameAndPwd" resultType="user">
+		SELECT
+		u.id,u.userCode,u.userName,u.userPassword,u.gender,u.birthday,u.phone,
+		u.address,u.userRole,u.createdBy,u.creationDate,u.modifyBy,u.modifyDate,
+		u.idPicPath,u.workPicPath,u.blance FROM smbms_user AS u
+		where
+		u.userCode=#{loginid} and u.userPassword=#{pwd}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="getUserTotalCount" resultType="int" parameterType="hashmap">
+		select count(*) from smbms_user u
+		inner join smbms_role r on
+		u.userRole
+		= r.rid
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="queryname!=null and queryname!=''">
+				and u.userName like CONCAT ('%',#{queryname}, '%')
+			</if>
+			<if test="roleId!=null and roleId!=''">
+				and u.userRole =#{roleId}
+			</if>
+		</trim>
+	</select>
+
+	<select id="getUserByPage" resultType="user" parameterType="hashmap">
+		select u.*,r.roleName from smbms_user u
+		inner join smbms_role r on
+		u.userRole = r.rid
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="queryname !=null and queryname!=''">
+				and u.userName like CONCAT ('%',#{queryname}, '%')
+			</if>
+			<if test="roleId!=null and roleId!=''">
+				and u.userRole =#{roleId}
+			</if>
+		</trim>
+		limit #{startrow},#{pagesize}
+	</select>
+	
+	<!-- 新增 -->
+	<insert id="addUser" parameterType="user">
+		insert into smbms_user
+		(userCode,userName,userPassword,birthday,userRole,idPicPath,workPicPath)
+		values (#{userCode},#{userName},#{userPassword},#{birthday},#{userRole},#{idPicPath},#{workPicPath})
+	</insert>
+	
+	
+	<select id="getUserById" resultType="user">
+		SELECT
+		u.id,u.userCode,u.userName,u.userPassword,u.gender,u.birthday,u.phone,
+		u.address,u.userRole,u.createdBy,u.creationDate,u.modifyBy,u.modifyDate,
+		u.idPicPath,u.workPicPath,u.blance FROM smbms_user AS u
+		where u.id=#{id}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateUser" parameterType="user">
+	    update smbms_user
+		set userName=#{userName},userPassword=#{userPassword},birthday=#{birthday},userRole=#{userRole}
+		where id=#{id}
+	</update>
+	
+	<select id="getUserByCode" resultType="user">
+		SELECT
+		u.id,u.userCode,u.userName,u.userPassword,u.gender,u.birthday,u.phone,
+		u.address,u.userRole,u.createdBy,u.creationDate,u.modifyBy,u.modifyDate,
+		u.idPicPath,u.workPicPath,u.blance FROM smbms_user AS u
+		where u.userCode=#{code}
+	</select>
+</mapper>

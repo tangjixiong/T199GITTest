@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<!-- 自动扫描某个包下带[''=[有注解的类 -->
+	<context:component-scan base-package="com.t199.controller" />
+	<!-- 启用注解方式的配置 -->
+	<mvc:annotation-driven><!-- conversion-service="myConversionService" -->
+		<mvc:message-converters>
+			<!-- 解決返回json格式中文乱码 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<!-- 处理日期转JSON -->
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json</value>
+					</list>
+				</property>
+				<property name="features">
+					<list>
+						<!-- Date的日期转换器 -->
+						<value>WriteDateUseDateFormat</value>
+					</list>
+				</property>
+			</bean>
+			<!-- 编辑器注册 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg value="UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<!-- 配置自定义转换器 -->
+	<!-- <bean id="myConversionService" class="org.springframework.context.support.ConversionServiceFactoryBean"> 
+		<property name="converters"> <list> <bean class="com.t199.util.StringToDateConverter"> 
+		<constructor-arg type="java.lang.String" value="yyyy-MM-dd"/> </bean> </list> 
+		</property> </bean> -->
+	<!-- 静态资源配置 -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+	<!-- 全局异常处理 -->
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.RuntimeException">error</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- 完成视图的对应 -->
+	<!-- 配置多视图解析器：允许同样的内容数据呈现不同的view -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="favorParameter" value="true" />
+		<property name="defaultContentType" value="text/html" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html;charset=UTF-8" />
+				<entry key="json" value="application/json;charset=UTF-8" />
+				<entry key="xml" value="application/xml;charset=UTF-8" />
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/jsp/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
+	<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
+		prefix:前缀 suffix：后缀 <property name="prefix" value="/WEB-INF/jsp/" /> <property 
+		name="suffix" value=".jsp" /> </bean> -->
+	<!-- 处理文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- maxUploadSize：设置单文件的最大限制 -->
+		<property name="maxUploadSize" value="6000000" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+</beans>
