@@ -1,2 +1,2 @@
 Git is a version control system.
-Git is free software.第一个版本
+Git is free software 哈哈哈哈哈.第二个版本
